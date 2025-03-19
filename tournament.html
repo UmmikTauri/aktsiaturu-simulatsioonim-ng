@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turniir</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Turniiri edetabel</h1>
+        
+        <h3>Turniiri võitjad:</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kasutajanimi</th>
+                    <th>Saldo (€)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in leaderboard %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.balance }} €</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <a href="{{ url_for('index') }}" class="btn btn-secondary mt-2">Tagasi avalehele</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

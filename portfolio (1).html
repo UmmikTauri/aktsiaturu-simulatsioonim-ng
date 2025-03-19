@@ -1,0 +1,145 @@
+<!-- portfolio.html -->
+<!DOCTYPE html>
+<html lang="et">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfell</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 30px auto;
+        }
+
+        .balance {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #34495e;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #ecf0f1;
+        }
+
+        tr:hover {
+            background-color: #f1c40f;
+            cursor: pointer;
+        }
+
+        .price {
+            font-weight: bold;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-view {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Portfell</h1>
+        <p>Teie aktsiate portfell</p>
+    </header>
+
+    <div class="container">
+        <div class="balance">Teie saldo: ${{ "%.2f"|format(balance) }}</div>
+
+        <h2>Avatud Positsioonid</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Aktsia</th>
+                    <th>Kogus</th>
+                    <th>Hind</th>
+                    <th>Summa</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for position in open_positions %}
+                <tr>
+                    <td>{{ position.ticker }}</td>
+                    <td>{{ position.quantity }}</td>
+                    <td>${{ "%.2f"|format(position.price) }}</td>
+                    <td>${{ "%.2f"|format(position.price * position.quantity) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Lõpetatud Tehingud</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Aktsia</th>
+                    <th>Kogus</th>
+                    <th>Tehingu hind</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in closed_transactions %}
+                <tr>
+                    <td>{{ transaction.ticker }}</td>
+                    <td>{{ transaction.quantity }}</td>
+                    <td>${{ "%.2f"|format(transaction.price) }}</td>
+                    <td>{{ transaction.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</body>
+
+</html>

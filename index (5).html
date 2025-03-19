@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="et">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktsiaturu Simulaator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 30px auto;
+            overflow-x: auto;
+        }
+
+        .balance {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #34495e;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #ecf0f1;
+        }
+
+        tr:hover {
+            background-color: #f1c40f;
+            cursor: pointer;
+        }
+
+        .price {
+            font-weight: bold;
+        }
+
+        .change-positive {
+            color: #2ecc71;
+        }
+
+        .change-negative {
+            color: #e74c3c;
+        }
+
+        .change-neutral {
+            color: #95a5a6;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-view {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-buy {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .btn-buy:hover {
+            background-color: #2ecc71;
+        }
+
+        .btn-sell {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-sell:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-auth {
+            background-color: #8e44ad;
+            color: white;
+        }
+
+        .btn-auth:hover {
+            background-color: #732d91;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #34495e;
+            color: white;
+            font-size: 14px;
+        }
+
+        /* Event buttons */
+        .btn-event {
+            background-color: #9b59b6;
+            color: white;
+        }
+
+        .btn-event:hover {
+            background-color: #8e44ad;
+        }
+
+        .event-info {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Aktsiaturu Simulaator</h1>
+        <p>Aktsiate nimekiri</p>
+
+        <div class="actions">
+            {% if session["username"] %}
+                <span>Tere tulemast, {{ session["username"] }}!</span>
+                <a href="{{ url_for('portfolio') }}" class="btn btn-view">Vaata portfelli</a>
+                <a href="{{ url_for('learning') }}" class="btn btn-view">Õpi</a>
+                <form action="{{ url_for('restart') }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-event">Restart</button>
+                </form>
+                <a href="{{ url_for('logout') }}" class="btn btn-auth">Logi välja</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-auth">Logi sisse</a>
+                <a href="{{ url_for('register') }}" class="btn btn-auth">Registreeru</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="container">
+        {% if session["username"] %}
+            <div class="balance">Teie saldo: ${{ "%.2f"|format(balance) }}</div>
+        {% endif %}
+
+        <table id="stock-table">
+            <thead>
+                <tr>
+                    <th>Aktsia</th>
+                    <th>Hind</th>
+                    <th>Muutus (%)</th>
+                    {% if session["username"] %}
+                        <th>Tegevused</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for stock in stocks %}
+                <tr id="stock-{{ stock.ticker }}" onmouseover="setCurrentStock('{{ stock.ticker }}')">
+                    <td>{{ stock.ticker }}</td>
+                    <td class="price">${{ "%.2f"|format(stock.close) }}</td>
+                    <td class="change {% if stock.change_percent > 0 %}change-positive{% elif stock.change_percent < 0 %}change-negative{% else %}change-neutral{% endif %}">
+                        {{ stock.change_percent }}%
+                    </td>
+                    {% if session["username"] %}
+                    <td>
+                        <form action="{{ url_for('buy_stock', ticker=stock.ticker) }}" method="POST" class="buy-form">
+                            <input type="number" name="quantity" min="1" placeholder="Kogus" required>
+                            <button type="submit" class="btn btn-buy">Osta</button>
+                        </form>
+                        <form action="{{ url_for('sell_stock', ticker=stock.ticker) }}" method="POST" class="sell-form">
+                            <input type="number" name="quantity" min="1" placeholder="Kogus" required>
+                            <button type="submit" class="btn btn-sell">Müü</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Event buttons section -->
+        <div class="actions">
+            <button class="btn btn-event" onclick="showEventInfo('challenge')">Väljakutse</button>
+            <button class="btn btn-event" onclick="showEventInfo('competition')">Võistlus</button>
+            <button class="btn btn-event" onclick="showEventInfo('pvp')">PVP Mõõduvõtmine</button>
+            <button class="btn btn-event" onclick="showEventInfo('tournament')">Turniir</button>
+        </div>
+
+        <!-- Event Info Display -->
+        <div id="event-info" class="event-info">
+            <p id="event-description"></p>
+            <button class="btn btn-success" id="start-event-btn">Käivita Event</button>
+            <button class="btn btn-danger" id="cancel-event-btn" onclick="cancelEvent()">Tühista</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; pog_mäng</p>
+    </footer>
+
+    <script>
+        let currentStockTicker = '';
+
+        function setCurrentStock(ticker) {
+            currentStockTicker = ticker;
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (!currentStockTicker) return; // If no stock is hovered, do nothing
+
+            if (event.key === '1') {
+                setQuantityAndSubmit('buy', 10, currentStockTicker);
+            } else if (event.key === '2') {
+                setQuantityAndSubmit('buy', 100, currentStockTicker);
+            } else if (event.key === '3') {
+                setQuantityAndSubmit('buy', 1000, currentStockTicker);
+            } else if (event.key === '4') {
+                setQuantityAndSubmit('sell', 10, currentStockTicker);
+            } else if (event.key === '5') {
+                setQuantityAndSubmit('sell', 100, currentStockTicker);
+            } else if (event.key === '6') {
+                setQuantityAndSubmit('sell', 1000, currentStockTicker);
+            }
+        });
+
+        function setQuantityAndSubmit(type, quantity, ticker) {
+            var formSelector = type === 'buy' ? '.buy-form' : '.sell-form';
+            var form = document.querySelector(`#stock-${ticker} ${formSelector}`);
+            var input = form.querySelector('input[name="quantity"]');
+            input.value = quantity;
+            form.submit();
+        }
+
+        function showEventInfo(event) {
+            const eventInfo = {
+                challenge: "Väljakutse: Teeni võimalikult palju raha. Aega on piiratud!",
+                competition: "Võistlus: Ühe kindla aktsia kauplemine. Kõige suurem tuluteenija võidab.",
+                pvp: "PVP Mõõduvõtmine: Mängi teiste vastu!",
+                tournament: "Turniir: Free for all kauplemine. Suurima kasumiga mängija võidab."
+            };
+
+            document.getElementById('event-description').innerText = eventInfo[event];
+            document.getElementById('event-info').style.display = 'block';
+            document.getElementById('start-event-btn').onclick = function() {
+                startEvent(event);
+            };
+        }
+
+        function startEvent(event) {
+            alert(event + " algab nüüd!");
+
+            fetch('/start_event', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ event: event })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(event + " on edukalt käivitatud!");
+                } else {
+                    alert("Kahjuks ei õnnestunud sündmust käivitada.");
+                }
+            })
+            .catch(error => {
+                console.error('Error starting event:', error);
+                alert("Tekkis viga sündmuse käivitamisel.");
+            });
+
+            cancelEvent();
+        }
+
+        function cancelEvent() {
+            document.getElementById('event-info').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>

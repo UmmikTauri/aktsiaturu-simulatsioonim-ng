@@ -1,0 +1,21 @@
+<!-- learning.html -->
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Õpi</title>
+</head>
+<body>
+    <h1>Õppepeatükid</h1>
+    <ul>
+        {% for lesson in lessons %}
+            <li>
+                <h2>{{ lesson.title }}</h2>
+                <p>{{ lesson.content }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}">Tagasi</a>
+</body>
+</html>

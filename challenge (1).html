@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Väljakutse</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Väljakutse</h1>
+        <p>Oled saanud väljakutse! Teenitud raha: <strong>{{ challenge_money }} €</strong></p>
+        <p>Väljakutse aeg on piiratud! Aega on jäänud: <strong>{{ time_left }}</strong></p>
+        <form method="POST">
+            <button class="btn btn-primary" type="submit">Väljakutse vastu võtta</button>
+        </form>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary mt-2">Tagasi avalehele</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

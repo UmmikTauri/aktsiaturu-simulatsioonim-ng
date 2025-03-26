@@ -1,4 +1,3 @@
-<!-- portfolio.html -->
 <!DOCTYPE html>
 <html lang="et">
 
@@ -133,6 +132,7 @@
                     <td>{{ transaction.ticker }}</td>
                     <td>{{ transaction.quantity }}</td>
                     <td>${{ "%.2f"|format(transaction.price) }}</td>
+                    <td>{{ transaction.date }}</td>
                     <td>{{ transaction.status }}</td>
                 </tr>
                 {% endfor %}

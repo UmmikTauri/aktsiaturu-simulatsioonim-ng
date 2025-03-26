@@ -171,10 +171,23 @@ def portfolio():
     if "portfolio" not in user:
         user["portfolio"] = {}  # Create empty portfolio if not exists
 
-    # Update the database if portfolio is empty or missing
-    users_db.update({"portfolio": user["portfolio"]}, User.username == session["username"])
+    # Get the user's open positions (stocks they own)
+    open_positions = []
+    for ticker, quantity in user["portfolio"].items():
+        stock_data = db.get(Query().ticker == ticker)
+        if stock_data:
+            open_positions.append({
+                "ticker": ticker,
+                "quantity": quantity,
+                "price": stock_data["close"]  # Get the current price from your database
+            })
 
-    return render_template("portfolio.html", balance=user["balance"], portfolio=user["portfolio"])
+    # Get the user's completed transactions (historical buy/sell data)
+    transactions_db = TinyDB("transactions.json")  # Example
+    closed_transactions = transactions_db.search(Query().username == session["username"])
+
+    return render_template("portfolio.html", balance=user["balance"], open_positions=open_positions, closed_transactions=closed_transactions)
+
 
 
 @app.route("/restart", methods=["POST"])
@@ -228,6 +241,19 @@ def buy_stock(ticker):
             user["portfolio"][ticker] = quantity
 
         users_db.update({"balance": user["balance"], "portfolio": user["portfolio"]}, User.username == session["username"])
+
+        # Add transaction to the transactions database
+        transactions_db = TinyDB("transactions.json")
+        transactions_db.insert({
+            "username": session["username"],
+            "action": "buy",
+            "ticker": ticker,
+            "quantity": quantity,
+            "price": stock_price,
+            "date": str(datetime.date.today()),
+            "status": "Completed"  # Completed for now
+        })
+
         flash(f"Õnnestus osta {quantity} aktsiat {ticker}!", "success")
     else:
         flash("Ei piisa rahast!", "error")
@@ -267,6 +293,19 @@ def sell_stock(ticker):
             del user["portfolio"][ticker]  # Remove stock if all shares are sold
 
         users_db.update({"balance": user["balance"], "portfolio": user["portfolio"]}, User.username == session["username"])
+
+        # Add transaction to the transactions database
+        transactions_db = TinyDB("transactions.json")
+        transactions_db.insert({
+            "username": session["username"],
+            "action": "sell",
+            "ticker": ticker,
+            "quantity": quantity,
+            "price": stock_price,
+            "date": str(datetime.date.today()),
+            "status": "Completed"  # Completed for now
+        })
+
         flash(f"Õnnestus müüa {quantity} aktsiat {ticker}!", "success")
     else:
         flash("Pole piisavalt aktsiaid müümiseks!", "error")

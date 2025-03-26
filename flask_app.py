@@ -184,10 +184,10 @@ def portfolio():
 
     # Get the user's completed transactions (historical buy/sell data)
     transactions_db = TinyDB("transactions.json")  # Example
-    closed_transactions = transactions_db.search(Query().username == session["username"])
+    open_transactions = transactions_db.search(Query().username == session["username"] and Query().status == "open")
+    closed_transactions = transactions_db.search(Query().username == session["username"] and Query().status == "closed")
 
     return render_template("portfolio.html", balance=user["balance"], open_positions=open_positions, closed_transactions=closed_transactions)
-
 
 
 @app.route("/restart", methods=["POST"])
@@ -242,16 +242,14 @@ def buy_stock(ticker):
 
         users_db.update({"balance": user["balance"], "portfolio": user["portfolio"]}, User.username == session["username"])
 
-        # Add transaction to the transactions database
+        # Insert transaction with status "open"
         transactions_db = TinyDB("transactions.json")
         transactions_db.insert({
             "username": session["username"],
-            "action": "buy",
             "ticker": ticker,
             "quantity": quantity,
             "price": stock_price,
-            "date": str(datetime.date.today()),
-            "status": "Completed"  # Completed for now
+            "status": "open"  # Mark as open when bought
         })
 
         flash(f"Õnnestus osta {quantity} aktsiat {ticker}!", "success")
@@ -259,6 +257,7 @@ def buy_stock(ticker):
         flash("Ei piisa rahast!", "error")
 
     return redirect(url_for("index"))
+
 
 # Route for selling stocks
 @app.route("/sell/<ticker>", methods=["POST"])
@@ -294,23 +293,17 @@ def sell_stock(ticker):
 
         users_db.update({"balance": user["balance"], "portfolio": user["portfolio"]}, User.username == session["username"])
 
-        # Add transaction to the transactions database
+        # Update transaction to "closed"
         transactions_db = TinyDB("transactions.json")
-        transactions_db.insert({
-            "username": session["username"],
-            "action": "sell",
-            "ticker": ticker,
-            "quantity": quantity,
-            "price": stock_price,
-            "date": str(datetime.date.today()),
-            "status": "Completed"  # Completed for now
-        })
+        # Find the transaction and update the status to "closed"
+        transactions_db.update({"status": "closed"}, Query().username == session["username"] and Query().ticker == ticker and Query().status == "open")
 
         flash(f"Õnnestus müüa {quantity} aktsiat {ticker}!", "success")
     else:
         flash("Pole piisavalt aktsiaid müümiseks!", "error")
 
     return redirect(url_for("index"))
+
 
 # Register route
 @app.route("/register", methods=["GET", "POST"])

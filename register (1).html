@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Stock Market Dashboard</title>
+    <title>Registreeri - Aktsiaturu simulatsioonimäng</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -100,12 +100,12 @@
 
 <body>
     <header>
-        <h1>Stock Market Dashboard</h1>
-        <p>Register for a new account</p>
+        <h1>Aktsiaturu simulatsioonimäng</h1>
+        <p>Loo uus konto</p>
     </header>
 
     <div class="form-container">
-        <h2>Create Your Account</h2>
+        <h2>Loo konto</h2>
         
         <!-- Flash messages for errors and success -->
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -119,16 +119,16 @@
         <form method="POST">
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Register</button>
+            <button type="submit">Registreeri</button>
         </form>
 
         <div class="auth-links">
-            <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+            <p>Juba on konto? <a href="{{ url_for('login') }}">Logi sisse siin</a></p>
         </div>
     </div>
 
     <footer>
-        <p>&copy; 2025 Stock Tracker - All Rights Reserved</p>
+        <p>&copy; Aktsiaturu simulatsioonimäng</p>
     </footer>
 </body>
 

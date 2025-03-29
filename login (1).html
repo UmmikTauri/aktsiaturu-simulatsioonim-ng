@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Stock Market Dashboard</title>
+    <title>Login - Atsiaturu simulaator</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -100,12 +100,12 @@
 
 <body>
     <header>
-        <h1>Stock Market Dashboard</h1>
-        <p>Login to your account</p>
+        <h1>Atsiaturu simulaator</h1>
+        <p>Logi sisse oma kontosse</p>
     </header>
 
     <div class="form-container">
-        <h2>Login to Your Account</h2>
+        <h2>Logi sisse</h2>
         
         <!-- Flash messages for errors and success -->
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -123,12 +123,12 @@
         </form>
 
         <div class="auth-links">
-            <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+            <p>Pole kontot? <a href="{{ url_for('register') }}">Registreeri siin</a></p>
         </div>
     </div>
 
     <footer>
-        <p>&copy; 2025 Stock Tracker - All Rights Reserved</p>
+        <p>&copy; Aktsiaturu simulatsioonimäng</p>
     </footer>
 </body>
 

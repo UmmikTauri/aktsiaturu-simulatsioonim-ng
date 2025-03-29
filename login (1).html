@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Atsiaturu simulaator</title>
+    <title>Logi sisse - Atsiaturu simulatsioonimäng</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -106,7 +106,7 @@
 
     <div class="form-container">
         <h2>Logi sisse</h2>
-        
+
         <!-- Flash messages for errors and success -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -119,7 +119,7 @@
         <form method="POST">
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
+            <button type="submit">Logi sisse</button>
         </form>
 
         <div class="auth-links">
